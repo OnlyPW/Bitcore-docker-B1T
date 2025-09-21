@@ -1,0 +1,24 @@
+services:
+  bitcore:
+    build:
+      context: .
+    container_name: bitcore
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - NETWORK=mainnet # mainnet|testnet|regtest
+      - RPC_USER=user
+      - RPC_PASSWORD=changeme
+      - RPC_ALLOW_IP=0.0.0.0/0
+    volumes:
+      - ./data:/data
+      - ./config:/config
+    ports:
+      - "8333:8333" # P2P
+      - "8332:8332" # RPC
+    command: []
+
+# Data is now stored in ./data directory
+
+
