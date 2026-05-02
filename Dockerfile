@@ -2,7 +2,7 @@ FROM debian:bookworm-slim
 
 LABEL maintainer="OnlyPW"
 
-ARG BIT_URL=https://github.com/bittoshimoto/Bit/releases/download/Bit.v3/bit.v3.tar.gz
+ARG BIT_URL=https://github.com/bittoshimoto/Bit/releases/download/Bit-v-4%40NickNames/Bit-v4.0.0.0.tar.gz
 
 ENV DEBIAN_FRONTEND=noninteractive \
     DATADIR=/data
@@ -53,7 +53,8 @@ RUN set -euxo pipefail \
     && rm -rf /tmp/bit-extract
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh \
+    && chmod +x /usr/local/bin/entrypoint.sh
 
 VOLUME ["/data"]
 
