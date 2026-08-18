@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:1
 
 # Build-Quelle wählen:
-#   SOURCE_BUILD=0 (Default): gepatchte Release-Binaries v4.0.0.0 aus OnlyPW/Bit-core laden
+#   SOURCE_BUILD=0 (Default): gepatchte Release-Binaries v4.0.0.1 aus OnlyPW/Bit-core laden
 #   SOURCE_BUILD=1:           aus OnlyPW/Bit-core-Quellcode kompilieren (langsam)
 # In docker-compose.yml via:  SOURCE_BUILD=1 docker compose build
 # Mit docker direkt:          docker build --target bitcore-1 .
 ARG SOURCE_BUILD=0
-ARG BIT_URL=https://github.com/OnlyPW/Bit-core/releases/download/v4.0.0.0/Bit-v4.0.0.0.tar.gz
+ARG BIT_URL=https://github.com/OnlyPW/Bit-core/releases/download/v4.0.0.1/Bit-v4.0.0.1.tar.gz
 ARG BIT_SOURCE_URL=https://github.com/OnlyPW/Bit-core.git
 ARG BIT_SOURCE_REF=main
 
