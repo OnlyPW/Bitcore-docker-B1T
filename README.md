@@ -43,7 +43,7 @@ docker compose up -d
 docker compose logs -f
 ```
 
-By default, ports 8333 (P2P) and 8332 (RPC) are exposed. The data directory is stored in the local `./data` directory.
+By default, P2P port 33317 (chain default) is exposed, and RPC port 45873 (chain default) is published to localhost as 127.0.0.1:8332. The data directory is stored in the local `./data` directory.
 
 ## Configuration
 
