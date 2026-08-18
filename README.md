@@ -2,7 +2,7 @@
 
 This project provides a Docker image for Bit Core. It downloads the Linux binaries from the provided release, installs system dependencies, and starts `bitd` with a persistent data directory.
 
-- Upstream Release: [`Bit v3 (Linux)`](https://github.com/bittoshimoto/Bit/releases/download/Bit.v3/bit.v3.tar.gz)
+- Upstream Release: [`Bit Core v4.0.0.0 — restore peer discovery (Linux)`](https://github.com/OnlyPW/Bit-core/releases/download/v4.0.0.0/Bit-v4.0.0.0.tar.gz)
 - Repository (initially empty): [`Bitcore-docker-B1T-`](https://github.com/OnlyPW/Bitcore-docker-B1T-.git)
 
 ## Features
