@@ -18,19 +18,36 @@ mkdir -p "$DATADIR"
 chown -R "$USER_ID":"$GROUP_ID" "$DATADIR"
 
 # Config erzeugen oder aktualisieren
-if [ ! -f "$CONF_FILE" ] || [ "$CONF_FILE" -ot "$CONFIG_TEMPLATE" ]; then
+# Wichtig: Bestehende bit.conf wird NIE überschrieben (RPC-Credentials o.ä. bleiben erhalten).
+# Falls bereits addnode-Bootstrap-Einträge fehlen, werden sie nur angehängt (Merge).
+APPEND_ADDNODE_BLOCK() {
+  if ! grep -qE '^[[:space:]]*addnode=' "$CONF_FILE"; then
+    echo "Ergänze addnode-Bootstrap-Peers in $CONF_FILE"
+    cat >> "$CONF_FILE" <<'EOF'
+
+# Bootstrap peers (fallback until DNS seeds are compiled into releases)
+addnode=167.86.89.107:33317
+addnode=45.146.252.138:33317
+addnode=92.42.45.220:33317
+EOF
+  fi
+}
+
+if [ ! -f "$CONF_FILE" ]; then
   if [ -f "$CONFIG_TEMPLATE" ]; then
-    echo "Kopiere Konfigurationsvorlage von $CONFIG_TEMPLATE nach $CONF_FILE"
-    cp "$CONFIG_TEMPLATE" "$CONF_FILE"
-    
-    # Ersetze Platzhalter mit Umgebungsvariablen
-    RPC_USER=${RPC_USER:-user}
-    RPC_PASSWORD=${RPC_PASSWORD:-$(openssl rand -hex 16)}
-    RPC_ALLOW_IP=${RPC_ALLOW_IP:-0.0.0.0/0}
-    NETWORK=${NETWORK:-mainnet}
-    
-    # Erstelle neue Konfiguration mit Umgebungsvariablen
-    cat > "$CONF_FILE" <<EOF
+    echo "Keine Konfiguration gefunden, erzeuge neue aus Umgebung (Ports gemäß Chain-Defaults: P2P 33317, RPC 45873)"
+  else
+    echo "Warnung: Keine Konfigurationsvorlage gefunden unter $CONFIG_TEMPLATE"
+    echo "Erstelle minimale Standardkonfiguration..."
+  fi
+
+  # Ersetze Platzhalter mit Umgebungsvariablen
+  RPC_USER=${RPC_USER:-user}
+  RPC_PASSWORD=${RPC_PASSWORD:-$(openssl rand -hex 16)}
+  RPC_ALLOW_IP=${RPC_ALLOW_IP:-0.0.0.0/0}
+  NETWORK=${NETWORK:-mainnet}
+
+  cat > "$CONF_FILE" <<EOF
 # Bit Core Configuration
 # Generated from template with environment variables
 
@@ -42,16 +59,16 @@ addressindex=1
 timestampindex=1
 spentindex=1
 
-# RPC settings
+# RPC settings (chain default rpcport: 45873)
 rpcuser=${RPC_USER}
 rpcpassword=${RPC_PASSWORD}
 rpcallowip=${RPC_ALLOW_IP}
 rpcbind=0.0.0.0
-rpcport=8332
+rpcport=45873
 
-# Network connectivity
+# Network connectivity (chain default port: 33317)
 listen=1
-port=8333
+port=33317
 maxconnections=125
 
 # Logging
@@ -64,33 +81,27 @@ maxmempool=300
 
 # Network mode
 EOF
-    
-    if [ "$NETWORK" = "testnet" ]; then
-      echo "testnet=1" >> "$CONF_FILE"
-    elif [ "$NETWORK" = "regtest" ]; then
-      echo "regtest=1" >> "$CONF_FILE"
-    fi
-    
-    echo "Konfiguration erstellt: RPC_USER=${RPC_USER}, NETWORK=${NETWORK}"
-  else
-    echo "Warnung: Keine Konfigurationsvorlage gefunden unter $CONFIG_TEMPLATE"
-    echo "Erstelle minimale Standardkonfiguration..."
-    RPC_USER=${RPC_USER:-user}
-    RPC_PASSWORD=${RPC_PASSWORD:-$(openssl rand -hex 16)}
-    RPC_ALLOW_IP=${RPC_ALLOW_IP:-0.0.0.0/0}
-    NETWORK=${NETWORK:-mainnet}
-    cat > "$CONF_FILE" <<EOF
-server=1
-daemon=0
-txindex=1
-rpcuser=${RPC_USER}
-rpcpassword=${RPC_PASSWORD}
-rpcallowip=${RPC_ALLOW_IP}
-rpcbind=0.0.0.0
-listen=1
-EOF
+
+  if [ "$NETWORK" = "testnet" ]; then
+    echo "testnet=1" >> "$CONF_FILE"
+  elif [ "$NETWORK" = "regtest" ]; then
+    echo "regtest=1" >> "$CONF_FILE"
   fi
+
+  # Bootstrap peers (fallback until DNS seeds are compiled into releases)
+  cat >> "$CONF_FILE" <<'EOF'
+
+# Bootstrap peers (fallback until DNS seeds are compiled into releases)
+addnode=167.86.89.107:33317
+addnode=45.146.252.138:33317
+addnode=92.42.45.220:33317
+EOF
+
+  echo "Konfiguration erstellt: RPC_USER=${RPC_USER}, NETWORK=${NETWORK}"
   echo "Erstellte Konfiguration unter $CONF_FILE"
+else
+  # Bestehende Konfiguration: nur Merge, niemals überschreiben
+  APPEND_ADDNODE_BLOCK
 fi
 
 # Prüfen, ob Binärdateien vorhanden sind

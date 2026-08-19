@@ -2,7 +2,7 @@
 
 This project provides a Docker image for Bit Core. It downloads the Linux binaries from the provided release, installs system dependencies, and starts `bitd` with a persistent data directory.
 
-- Upstream Release: [`Bit v3 (Linux)`](https://github.com/bittoshimoto/Bit/releases/download/Bit.v3/bit.v3.tar.gz)
+- Upstream Release: [`Bit Core v4.0.1.0 — restore peer discovery (Linux)`](https://github.com/OnlyPW/Bit-core/releases/download/v4.0.1.0/Bit-v4.0.1.0.tar.gz)
 - Repository (initially empty): [`Bitcore-docker-B1T-`](https://github.com/OnlyPW/Bitcore-docker-B1T-.git)
 
 ## Features
@@ -43,7 +43,7 @@ docker compose up -d
 docker compose logs -f
 ```
 
-By default, ports 8333 (P2P) and 8332 (RPC) are exposed. The data directory is stored in the local `./data` directory.
+By default, P2P port 33317 (chain default) is exposed, and RPC port 45873 (chain default) is published to localhost as 127.0.0.1:8332. The data directory is stored in the local `./data` directory.
 
 ## Configuration
 

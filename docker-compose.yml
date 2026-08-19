@@ -2,6 +2,10 @@ services:
   bitcore:
     build:
       context: .
+      # SOURCE_BUILD=0 (Default): gepatchte Release-Binaries laden (schnell)
+      # SOURCE_BUILD=1: aus OnlyPW/Bit-core-Quellcode kompilieren:
+      #   SOURCE_BUILD=1 docker compose build --no-cache
+      target: bitcore-${SOURCE_BUILD:-0}
     container_name: bitcore
     restart: unless-stopped
     environment:
@@ -15,8 +19,8 @@ services:
       - ./data:/data
       - ./config:/config
     ports:
-      - "8333:8333" # P2P
-      - "8332:8332" # RPC
+      - "33317:33317"            # P2P (chain default)
+      - "127.0.0.1:8332:45873"   # RPC, localhost only (container RPC port is 45873)
     command: []
 
 # Data is now stored in ./data directory
